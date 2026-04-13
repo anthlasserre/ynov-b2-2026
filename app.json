@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "ynov-b2-2026",
+    "scheme": "ynov",
     "slug": "ynov-b2-2026",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,7 +25,14 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
