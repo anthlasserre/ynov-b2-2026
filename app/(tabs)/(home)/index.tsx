@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { Redirect } from "expo-router";
 import { Text, View, FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import { useFonts } from "expo-font";
+import { useEffect, useState } from "react";
+import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
+
+SplashScreen.preventAutoHideAsync();
 
 const loadPosts = async () => {
   console.log('test')
@@ -9,12 +16,47 @@ const loadPosts = async () => {
     .then((res) => res.json())
 };
 
+const useIsOnboarded = () => {
+  const [value, setValue] = useState(true);
+  const { getItem } = useAsyncStorage('onboarded');
+
+  useEffect(() => {
+    getItem().then((value) => setValue(Boolean(value)))
+  }, []);
+
+  return value;
+}
+
 export default function Home() {
+  const isOnboarded = useIsOnboarded();
+
   const { isLoading, isError, data, refetch, isRefetching } = useQuery({
     queryKey: ['items'],
     queryFn: loadPosts,
     staleTime: 60 * 1000 * 5, // 5mn
   })
+
+  const [loaded, error] = useFonts({
+    'Hiatus': require('../../../assets/fonts/Hiatus.ttf'),
+    'Montserrat': require('../../../assets/fonts/Montserrat.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
+
+  // Check de l'état d'onboarding
+  if (!isOnboarded) {
+    return (
+      <Redirect href="/onboarding" />
+    )
+  }
 
   if (isLoading) {
     return (
