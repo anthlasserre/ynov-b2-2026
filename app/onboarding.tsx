@@ -1,82 +1,105 @@
 import { useRouter } from "expo-router";
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
+import SlideItem from "@/src/components/slide-item";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Onboarding() {
-    const { top, bottom } = useSafeAreaInsets();
-    const [isSaving, setIsSaving] = useState(false);
-    const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { top, bottom } = useSafeAreaInsets();
 
-    const onPressExplore = async () => {
-        setIsSaving(true);
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            await AsyncStorage.setItem('onboarded', 'true');
-            return router.replace('/')
-        } finally {
-            setIsSaving(false)
-        }
+  const onPressExplore = async () => {
+    setIsSaving(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await AsyncStorage.setItem("onboarded", "true");
+      return router.replace("/");
+    } finally {
+      setIsSaving(false);
     }
+  };
 
-    return (
-        <View className="flex-1 bg-white">
-            <Image source={require("../assets/bg-onboarding.png")} className={`w-full h-full object-cover absolute top-0 left-0`} />
-            <View style={{ paddingTop: top + 20, paddingBottom: bottom, paddingHorizontal: 32 }} className="flex-1 justify-between">
-                <Text style={styles.title}>
-                    Aspen
-                </Text>
-                <View className="gap-4">
-                    <View>
-                        <Text style={styles.body}>
-                            Plan your
-                        </Text>
-                        <Text style={styles.body2}>
-                            Luxurious Vacation
-                        </Text>
-                    </View>
-                    <TouchableOpacity onPress={onPressExplore} activeOpacity={0.8} className="bg-[#176FF2] justify-center rounded-[16] py-3 flex-row gap-2">
-                        <Text className="text-white text-lg font-bold">
-                            Explore
-                        </Text>
-                        {isSaving && (
-                            <ActivityIndicator color="white" />
-                        )}
-                    </TouchableOpacity>
-                </View>
-            </View>
+  const data = [
+    {
+      title: "Watch",
+      body: "Popular Places",
+      backgroundImage: require("../assets/bg-onboarding.png"),
+    },
+    {
+      title: "Plan Your",
+      body: "Luxury Vacations",
+      backgroundImage: require("../assets/bg-onboarding-2.png"),
+    },
+    {
+      backgroundImage: require("../assets/bg-onboarding-3.png"),
+      title: "Book",
+      body: "In Seconds",
+      onSubmit: onPressExplore,
+      isSubmitting: isSaving,
+      submitLabel: "Explore",
+    },
+  ];
+
+  const onScroll = (event: any) => {
+    const totalWidth = event.nativeEvent.layoutMeasurement.width;
+    const xPosition = event.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(xPosition / totalWidth);
+    if (newIndex !== activeIndex) {
+      setActiveIndex(newIndex);
+    }
+  };
+
+  const isLastIndex = data.length - 1 === activeIndex;
+
+  return (
+    <View className="flex-1 bg-black">
+      <FlatList
+        data={data}
+        pagingEnabled
+        onScroll={onScroll}
+        scrollEventThrottle={20}
+        renderItem={({ item, index }) => (
+          <SlideItem {...item} isActive={index === activeIndex} />
+        )}
+        showsHorizontalScrollIndicator={false}
+        horizontal
+      />
+      <View
+        className="flex-1 absolute top-0 left-0 right-0"
+        style={{
+          paddingTop: top + 20,
+          paddingBottom: bottom,
+          paddingHorizontal: 32,
+        }}
+      >
+        <Text style={styles.title}>{"Aspen"}</Text>
+      </View>
+      {!isLastIndex && (
+        <View className="absolute flex-row bottom-0 left-0 w-full items-center justify-center gap-2 pb-12">
+          {data.map((_, index) => (
+            <View
+              key={index}
+              className={`h-2 w-2 rounded-full bg-white ${activeIndex === index ? "bg-white" : "bg-white opacity-50"}`}
+            />
+          ))}
         </View>
-    );
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    title: {
-        fontFamily: 'Hiatus',
-        fontSize: 116,
-        color: 'white',
-        textAlign: 'center'
-    },
-    body: {
-        fontFamily: 'Montserrat',
-        fontSize: 24,
-        color: 'white',
-    },
-    body2: {
-        fontFamily: 'Montserrat-Medium',
-        fontSize: 40,
-        color: 'white',
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover'
-    },
-    ctaLabel: {
-        fontSize: 16
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  title: {
+    fontFamily: "Hiatus",
+    fontSize: 116,
+    color: "white",
+    textAlign: "center",
+  },
+});
