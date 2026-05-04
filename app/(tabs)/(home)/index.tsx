@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
@@ -13,6 +14,11 @@ import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage, {
   useAsyncStorage,
 } from "@react-native-async-storage/async-storage";
+import { Skeleton } from "@/components/skeleton";
+
+const WINDOW_WIDTH = Dimensions.get("window").width;
+
+const fakeArray = Array.from({ length: 10 }, (_, index) => index);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,8 +73,10 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-white justify-center align-center">
-        <ActivityIndicator />
+      <View className="flex-1 bg-white justify-center align-center pt-8 p-4 gap-4">
+        {fakeArray.map((item) => (
+          <Skeleton key={item} width={WINDOW_WIDTH - 32} height={100} />
+        ))}
       </View>
     );
   }
