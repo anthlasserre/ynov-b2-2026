@@ -102,7 +102,7 @@ export default function Home() {
           className="bg-gray-300 px-4 py-2"
           entering={FadeInDown.delay(index * 100)}
         >
-          <Text className="text-xl">{"Test"}</Text>
+          <Text className="text-xl">{item.title}</Text>
           <Text className="text-sm">{item.body}</Text>
         </Animated.View>
       )}
