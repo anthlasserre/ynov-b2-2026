@@ -15,6 +15,7 @@ import AsyncStorage, {
   useAsyncStorage,
 } from "@react-native-async-storage/async-storage";
 import { Skeleton } from "@/components/skeleton";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
 
@@ -96,11 +97,14 @@ export default function Home() {
       }
       data={data}
       contentContainerClassName="gap-4 p-4"
-      renderItem={({ item }) => (
-        <View className="bg-gray-300 px-4 py-2">
+      renderItem={({ item, index }) => (
+        <Animated.View
+          className="bg-gray-300 px-4 py-2"
+          entering={FadeInDown.delay(index * 100)}
+        >
           <Text className="text-xl">{"Test"}</Text>
           <Text className="text-sm">{item.body}</Text>
-        </View>
+        </Animated.View>
       )}
     />
   );
