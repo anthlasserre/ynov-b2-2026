@@ -24,7 +24,6 @@ const fakeArray = Array.from({ length: 10 }, (_, index) => index);
 SplashScreen.preventAutoHideAsync();
 
 const loadPosts = async () => {
-  console.log("test");
   // simulate delay 5s
   await new Promise((resolve) => setTimeout(resolve, 5000));
   return fetch("https://jsonplaceholder.typicode.com/posts").then((res) =>
@@ -99,10 +98,10 @@ export default function Home() {
       contentContainerClassName="gap-4 p-4"
       renderItem={({ item, index }) => (
         <Animated.View
-          className="bg-gray-300 px-4 py-2"
+          className="bg-gray-300 px-4 py-2 rounded-lg"
           entering={FadeInDown.delay(index * 100)}
         >
-          <Text className="text-xl">{item.title}</Text>
+          <Text className="text-xl font-bold">{item.title}</Text>
           <Text className="text-sm">{item.body}</Text>
         </Animated.View>
       )}
