@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -10,11 +9,8 @@ import {
   View,
 } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
   useAnimatedStyle,
   useDerivedValue,
-  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 const SLIDE_ITEM_WIDTH = Dimensions.get("screen").width;

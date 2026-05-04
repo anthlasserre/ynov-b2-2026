@@ -9,7 +9,7 @@ export default function Onboarding() {
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
 
   const onPressExplore = async () => {
     setIsSaving(true);
@@ -44,8 +44,8 @@ export default function Onboarding() {
   ];
 
   const onScroll = (event: any) => {
-    const totalWidth = event.nativeEvent.layoutMeasurement.width;
-    const xPosition = event.nativeEvent.contentOffset.x;
+    const totalWidth = event?.nativeEvent?.layoutMeasurement.width;
+    const xPosition = event?.nativeEvent?.contentOffset.x;
     const newIndex = Math.round(xPosition / totalWidth);
     if (newIndex !== activeIndex) {
       setActiveIndex(newIndex);
@@ -57,22 +57,20 @@ export default function Onboarding() {
   return (
     <View className="flex-1 bg-black">
       <FlatList
+        horizontal
         data={data}
         pagingEnabled
-        onScroll={onScroll}
-        scrollEventThrottle={20}
         renderItem={({ item, index }) => (
           <SlideItem {...item} isActive={index === activeIndex} />
         )}
+        onScroll={onScroll}
+        scrollEventThrottle={20}
         showsHorizontalScrollIndicator={false}
-        horizontal
       />
       <View
         className="flex-1 absolute top-0 left-0 right-0"
         style={{
           paddingTop: top + 20,
-          paddingBottom: bottom,
-          paddingHorizontal: 32,
         }}
       >
         <Text style={styles.title}>{"Aspen"}</Text>
@@ -82,7 +80,7 @@ export default function Onboarding() {
           {data.map((_, index) => (
             <View
               key={index}
-              className={`h-2 w-2 rounded-full bg-white ${activeIndex === index ? "bg-white" : "bg-white opacity-50"}`}
+              className={`h-2 w-2 rounded-full bg-white  ${activeIndex != index && "opacity-50"}`}
             />
           ))}
         </View>
